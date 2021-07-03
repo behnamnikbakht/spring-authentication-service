@@ -18,6 +18,5 @@ public interface AuthenticationServer {
 
     Token renewToken(String username);
 
-    Token renewRefreshToken(String refreshToken);
-
+    Token refreshToken(String refreshToken);
 }

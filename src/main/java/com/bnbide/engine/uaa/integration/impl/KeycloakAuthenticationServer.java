@@ -214,8 +214,32 @@ public class KeycloakAuthenticationServer implements AuthenticationServer {
     }
 
     @Override
-    public Token renewRefreshToken(String refreshToken) {
-        return null;
+    public Token refreshToken(String refreshToken) {
+        String url = String.format("%s/auth/realms/%s/protocol/openid-connect/token", keycloakAddr,
+                uaaConfig.getKeycloak().getRealm());
+
+        log.debug("refresh token : {}",refreshToken);
+
+        final StringBuilder sb = new StringBuilder();
+
+        retrier.retry(() -> Unirest.post(url)
+                .field(CLIENT_ID, uaaConfig.getKeycloak().getClientId())
+                .field(CLIENT_SECRET, uaaConfig.getKeycloak().getClientSecret())
+                .field(GRANT_TYPE, REFRESH_TOKEN)
+                .field(REFRESH_TOKEN, refreshToken)
+                .asString(), response -> true, (response) -> {
+            sb.append(response.getBody());
+        });
+
+        Token token;
+        try{
+            token = objectMapper.readValue(sb.toString(), Token.class);
+        }
+        catch (Exception e){
+            log.error("cannot parse message from keycloak", e);
+            throw UaaException.build(ExceptionCodes.CODE_AUTHENTICATION_SERVER_REQUEST_ERROR, e.getMessage());
+        }
+        return token;
     }
 
 }

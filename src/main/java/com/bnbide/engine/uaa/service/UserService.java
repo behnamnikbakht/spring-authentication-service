@@ -10,4 +10,5 @@ public interface UserService {
 
     Token authenticate(String identifier, String pinCode);
 
+    Token refreshToken(String refreshToken);
 }

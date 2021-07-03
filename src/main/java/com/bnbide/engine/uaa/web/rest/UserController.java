@@ -41,4 +41,10 @@ public class UserController {
         Token token = userService.authenticate(body.getIdentifier(), body.getPinCode());
         return new ResponseEntity<>(new LoginVerifyResponse().token(token), HttpStatus.OK);
     }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<RefreshTokenResponse> refreshToken(@Valid @RequestBody RefreshTokenRequest body){
+        Token token = userService.refreshToken(body.getRefreshToken());
+        return new ResponseEntity<>(new RefreshTokenResponse().token(token), HttpStatus.OK);
+    }
 }

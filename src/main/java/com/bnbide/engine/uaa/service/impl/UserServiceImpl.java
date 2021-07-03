@@ -129,6 +129,12 @@ public class UserServiceImpl implements UserService {
         return authenticationServer.renewToken(userIdentifier.getPhoneNumber());
     }
 
+    @Override
+    public Token refreshToken(String refreshToken) {
+        log.debug("refreshToken refreshToken = {}", refreshToken);
+        return authenticationServer.refreshToken(refreshToken);
+    }
+
     private AuthKey createAuthKey(String identifier){
         return new AuthKey().identifier(identifier).type("user");
     }
